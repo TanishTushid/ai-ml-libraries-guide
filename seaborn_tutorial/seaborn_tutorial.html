@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seaborn Mastery — Industry-Level Tutorial</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0f14;
+    --bg2: #111620;
+    --bg3: #181e29;
+    --bg4: #1e2634;
+    --border: #2a3345;
+    --border2: #3a4a62;
+    --accent: #e8a838;
+    --accent2: #f0c060;
+    --teal: #2dd4a0;
+    --coral: #f06a5a;
+    --blue: #5a9cf5;
+    --purple: #a78bfa;
+    --text: #e8eaf0;
+    --text2: #9aa5b8;
+    --text3: #5f6d82;
+    --code-bg: #0d1117;
+    --sidebar-w: 260px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.75;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: var(--sidebar-w);
+    min-height: 100vh;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    position: fixed;
+    top: 0; left: 0;
+    overflow-y: auto;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-logo {
+    padding: 1.5rem 1.25rem 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .logo-tag {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.3rem;
+  }
+  .logo-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 19px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .sidebar-nav { padding: 1rem 0; flex: 1; }
+  .nav-section { margin-bottom: 0.5rem; }
+  .nav-section-title {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text3);
+    padding: 0.5rem 1.25rem 0.25rem;
+  }
+  .nav-link {
+    display: block;
+    padding: 0.35rem 1.25rem 0.35rem 1.5rem;
+    font-size: 13.5px;
+    color: var(--text2);
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .nav-link:hover { color: var(--text); background: var(--bg3); border-left-color: var(--border2); }
+  .nav-link.active { color: var(--accent); border-left-color: var(--accent); background: rgba(232,168,56,0.06); }
+  .sidebar-badge {
+    font-size: 10px;
+    background: rgba(232,168,56,0.15);
+    color: var(--accent);
+    padding: 1px 6px;
+    border-radius: 3px;
+    margin-left: 6px;
+    font-weight: 600;
+  }
+
+  /* MAIN */
+  .main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    max-width: 900px;
+    padding: 3rem 3.5rem;
+  }
+
+  /* SECTIONS */
+  .section {
+    margin-bottom: 4.5rem;
+    scroll-margin-top: 2rem;
+  }
+  .section-badge {
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 40px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.3;
+    margin-bottom: 0.75rem;
+  }
+  h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--accent2);
+    margin: 1.75rem 0 0.6rem;
+  }
+  p { margin-bottom: 0.9rem; color: var(--text2); }
+  strong { color: var(--text); font-weight: 500; }
+  .lead { font-size: 17px; color: var(--text2); line-height: 1.8; margin-bottom: 1.5rem; }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, var(--bg2) 0%, var(--bg3) 100%);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2.5rem;
+    margin-bottom: 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 250px; height: 250px;
+    background: radial-gradient(circle, rgba(232,168,56,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  .hero-stat {
+    background: var(--bg4);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+  }
+  .hero-stat-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem; }
+  .hero-stat-val { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; color: var(--accent); }
+
+  /* CODE */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.4rem 1.5rem;
+    overflow-x: auto;
+    margin: 1rem 0 1.5rem;
+    position: relative;
+  }
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13.5px;
+    line-height: 1.8;
+  }
+  .code-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text3);
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 4px 4px 0 0;
+    margin-bottom: -1px;
+  }
+  .kw { color: #ff79c6; }
+  .fn { color: #8be9fd; }
+  .str { color: #f1fa8c; }
+  .cm { color: var(--text3); font-style: italic; }
+  .num { color: #bd93f9; }
+  .cls { color: #50fa7b; }
+  .op { color: #ff79c6; }
+  .var { color: var(--text); }
+  .param { color: #ffb86c; }
+  .imp { color: #50fa7b; }
+
+  /* INLINE CODE */
+  p code, li code {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 13px;
+    color: var(--teal);
+  }
+
+  /* CALLOUTS */
+  .callout {
+    border-left: 3px solid;
+    border-radius: 0 8px 8px 0;
+    padding: 1rem 1.25rem;
+    margin: 1.25rem 0;
+    background: var(--bg3);
+  }
+  .callout.tip { border-color: var(--teal); }
+  .callout.warn { border-color: var(--accent); }
+  .callout.info { border-color: var(--blue); }
+  .callout.danger { border-color: var(--coral); }
+  .callout-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+  .callout.tip .callout-title { color: var(--teal); }
+  .callout.warn .callout-title { color: var(--accent); }
+  .callout.info .callout-title { color: var(--blue); }
+  .callout.danger .callout-title { color: var(--coral); }
+  .callout p { margin: 0; font-size: 14.5px; }
+
+  /* TABLES */
+  .table-wrap { overflow-x: auto; margin: 1.25rem 0 1.5rem; border-radius: 8px; border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th {
+    background: var(--bg3);
+    color: var(--text);
+    font-weight: 500;
+    padding: 0.7rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+  }
+  td { padding: 0.6rem 1rem; border-bottom: 1px solid var(--border); color: var(--text2); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--bg3); }
+  td code { background: var(--bg3); border: 1px solid var(--border); border-radius: 3px; padding: 1px 5px; font-size: 12px; color: var(--teal); }
+
+  /* GRID CARDS */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+    gap: 1rem;
+    margin: 1.25rem 0;
+  }
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+  }
+  .card-icon {
+    font-size: 22px;
+    margin-bottom: 0.6rem;
+  }
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.35rem;
+  }
+  .card-desc { font-size: 13px; color: var(--text3); line-height: 1.5; }
+
+  /* DIVIDER */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2.5rem 0;
+  }
+
+  /* PILL */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 3px 11px;
+    font-size: 12.5px;
+    color: var(--text2);
+    margin: 2px;
+  }
+  .pill.green { border-color: rgba(45,212,160,0.3); color: var(--teal); background: rgba(45,212,160,0.05); }
+  .pill.amber { border-color: rgba(232,168,56,0.3); color: var(--accent); background: rgba(232,168,56,0.05); }
+  .pill.blue { border-color: rgba(90,156,245,0.3); color: var(--blue); background: rgba(90,156,245,0.05); }
+  .pill.coral { border-color: rgba(240,106,90,0.3); color: var(--coral); background: rgba(240,106,90,0.05); }
+
+  /* STEP LIST */
+  .steps { list-style: none; counter-reset: step; }
+  .steps li {
+    counter-increment: step;
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    align-items: flex-start;
+  }
+  .steps li::before {
+    content: counter(step);
+    min-width: 28px; height: 28px;
+    background: rgba(232,168,56,0.15);
+    color: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .steps li p { margin: 0; font-size: 15px; }
+
+  /* COMPARE */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.25rem 0;
+  }
+  .compare-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+  }
+  .compare-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.75rem;
+  }
+  .compare-box.good .compare-title { color: var(--teal); }
+  .compare-box.alt .compare-title { color: var(--blue); }
+
+  /* OUTPUT VISUAL MOCKUP */
+  .output-preview {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 0.75rem 0 1.5rem;
+    border: 1px solid var(--border);
+  }
+  .output-bar {
+    background: #f5f5f5;
+    padding: 8px 12px;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #ffbd2e; }
+  .dot-g { background: #28c940; }
+  .preview-body {
+    background: #f9f9f9;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .chart-area {
+    background: white;
+    border-radius: 6px;
+    border: 1px solid #e8e8e8;
+    padding: 1rem;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    color: #666;
+  }
+
+  /* PROGRESS/TIMELINE */
+  .timeline { position: relative; padding-left: 1.75rem; }
+  .timeline::before { content:''; position:absolute; left:6px; top:8px; bottom:8px; width:1px; background: var(--border); }
+  .tl-item { position: relative; margin-bottom: 1.5rem; }
+  .tl-dot { width:13px; height:13px; border-radius:50%; background: var(--accent); border:2px solid var(--bg); position:absolute; left:-1.75rem; top:4px; }
+  .tl-title { font-family:'Syne', sans-serif; font-size:14px; font-weight:600; color:var(--text); margin-bottom:0.2rem; }
+  .tl-body { font-size:13.5px; color:var(--text2); }
+
+  ul.bullet { padding-left: 1.25rem; margin-bottom: 1rem; }
+  ul.bullet li { color: var(--text2); font-size: 15px; margin-bottom: 0.35rem; }
+
+  .tag { display:inline-block; font-size:11px; background:var(--bg3); border:1px solid var(--border); border-radius:4px; padding:1px 8px; color:var(--text3); margin-right:4px; font-family:'JetBrains Mono',monospace; }
+
+  @media (max-width: 900px) {
+    .sidebar { transform: translateX(-100%); }
+    .main { margin-left: 0; padding: 2rem 1.25rem; }
+    .hero-grid { grid-template-columns: 1fr 1fr; }
+    .compare { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-tag">Python · Data Visualization</div>
+    <div class="logo-title">Seaborn<br>Mastery</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-section-title">Foundations</div>
+      <a href="#intro" class="nav-link active">Introduction</a>
+      <a href="#install" class="nav-link">Installation & Setup</a>
+      <a href="#core" class="nav-link">Core Concepts</a>
+      <a href="#datasets" class="nav-link">Working with Data</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Plot Types</div>
+      <a href="#relational" class="nav-link">Relational Plots</a>
+      <a href="#distributions" class="nav-link">Distribution Plots</a>
+      <a href="#categorical" class="nav-link">Categorical Plots</a>
+      <a href="#regression" class="nav-link">Regression Plots</a>
+      <a href="#matrix" class="nav-link">Matrix Plots</a>
+      <a href="#grids" class="nav-link">Multi-Plot Grids <span class="sidebar-badge">Advanced</span></a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Mastery</div>
+      <a href="#themes" class="nav-link">Themes & Styling</a>
+      <a href="#realworld" class="nav-link">Real-World Pipeline</a>
+      <a href="#patterns" class="nav-link">Anti-Patterns</a>
+      <a href="#cheatsheet" class="nav-link">Cheatsheet</a>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+  <!-- ==================== INTRO ==================== -->
+  <section class="section" id="intro">
+    <div class="section-badge">Chapter 01</div>
+    <h1>Seaborn:<br>Industry-Level Mastery</h1>
+    <p class="lead">The complete guide to production-grade statistical visualization in Python — from setup to real-world data pipelines used at companies like Netflix, Spotify, and Airbnb.</p>
+
+    <div class="hero">
+      <h2 style="font-size:18px; margin-bottom:0.5rem;">Why Seaborn over Matplotlib?</h2>
+      <p style="margin:0 0 0.25rem; font-size:14.5px; color:var(--text2);">Seaborn is a <strong>statistical visualization library</strong> built on top of Matplotlib. It provides a high-level API that produces beautiful plots with minimal code and deep pandas integration.</p>
+      <div class="hero-grid">
+        <div class="hero-stat"><div class="hero-stat-label">Lines of code</div><div class="hero-stat-val">80% less</div></div>
+        <div class="hero-stat"><div class="hero-stat-label">Prettier defaults</div><div class="hero-stat-val">Built-in</div></div>
+        <div class="hero-stat"><div class="hero-stat-label">Stats integration</div><div class="hero-stat-val">Native</div></div>
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <div class="card-title">Statistical Focus</div>
+        <div class="card-desc">Built for exploring relationships, distributions, and uncertainty — not just pretty charts.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🐼</div>
+        <div class="card-title">Pandas Native</div>
+        <div class="card-desc">Pass DataFrames directly. Column names become axis labels, legends, and hue mappings automatically.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎨</div>
+        <div class="card-title">Beautiful Defaults</div>
+        <div class="card-desc">Professional color palettes, clean grids, and typography out of the box.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <div class="card-title">Grid Power</div>
+        <div class="card-desc">FacetGrid and PairGrid let you visualize multidimensional data elegantly in a few lines.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== INSTALL ==================== -->
+  <section class="section" id="install">
+    <div class="section-badge">Chapter 02</div>
+    <h2>Installation & Project Setup</h2>
+    <p>Setting up a professional data science environment with virtual environments and pinned dependencies.</p>
+
+    <h3>Environment Setup (Industry Standard)</h3>
+    <div class="code-label">bash</div>
+    <pre><code><span class="cm"># Create isolated environment</span>
+python -m venv venv
+source venv/bin/activate     <span class="cm"># Linux/Mac</span>
+venv\Scripts\activate        <span class="cm"># Windows</span>
+
+<span class="cm"># Install core data science stack</span>
+pip install seaborn pandas numpy matplotlib scipy scikit-learn jupyterlab
+
+<span class="cm"># Pin versions for reproducibility (requirements.txt)</span>
+pip freeze > requirements.txt</code></pre>
+
+    <h3>Standard Import Convention</h3>
+    <div class="code-label">python</div>
+    <pre><code><span class="kw">import</span> <span class="imp">seaborn</span> <span class="kw">as</span> sns
+<span class="kw">import</span> <span class="imp">matplotlib.pyplot</span> <span class="kw">as</span> plt
+<span class="kw">import</span> <span class="imp">pandas</span> <span class="kw">as</span> pd
+<span class="kw">import</span> <span class="imp">numpy</span> <span class="kw">as</span> np
+
+<span class="cm"># Check version (important for API compatibility)</span>
+<span class="fn">print</span>(sns.<span class="var">__version__</span>)   <span class="cm"># Should be 0.13+</span>
+
+<span class="cm"># Set global theme at the top of every notebook</span>
+sns.<span class="fn">set_theme</span>(style=<span class="str">"darkgrid"</span>, font_scale=<span class="num">1.1</span>)</code></pre>
+
+    <div class="callout tip">
+      <div class="callout-title">Pro Tip</div>
+      <p>Always set your theme at the top of your script/notebook. This ensures consistent styling across all plots and prevents matplotlib's defaults from leaking in.</p>
+    </div>
+  </section>
+
+  <!-- ==================== CORE CONCEPTS ==================== -->
+  <section class="section" id="core">
+    <div class="section-badge">Chapter 03</div>
+    <h2>Core Concepts</h2>
+    <p>Understanding the architecture behind Seaborn makes you dramatically more effective.</p>
+
+    <h3>Figure-Level vs Axes-Level Functions</h3>
+    <p>This is the most important distinction in Seaborn. Every function is either figure-level or axes-level:</p>
+
+    <div class="compare">
+      <div class="compare-box good">
+        <div class="compare-title">Figure-Level Functions</div>
+        <ul class="bullet">
+          <li>Return a <code>FacetGrid</code> object</li>
+          <li>Manage their own figure and subplots</li>
+          <li>Support <code>col=</code> and <code>row=</code> faceting</li>
+          <li>Examples: <code>relplot</code>, <code>displot</code>, <code>catplot</code>, <code>lmplot</code></li>
+        </ul>
+      </div>
+      <div class="compare-box alt">
+        <div class="compare-title">Axes-Level Functions</div>
+        <ul class="bullet">
+          <li>Return a <code>matplotlib.Axes</code> object</li>
+          <li>Draw into existing axes</li>
+          <li>Composable with matplotlib subplots</li>
+          <li>Examples: <code>scatterplot</code>, <code>histplot</code>, <code>boxplot</code></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="code-label">python — figure-level vs axes-level</div>
+    <pre><code><span class="cm"># FIGURE-LEVEL — manages its own figure</span>
+g = sns.<span class="fn">relplot</span>(data=tips, x=<span class="str">"total_bill"</span>, y=<span class="str">"tip"</span>, col=<span class="str">"time"</span>)
+g.<span class="fn">set_axis_labels</span>(<span class="str">"Total Bill ($)"</span>, <span class="str">"Tip ($)"</span>)
+g.<span class="fn">set_titles</span>(<span class="str">"{col_name} Dining"</span>)
+
+<span class="cm"># AXES-LEVEL — works inside your subplot layout</span>
+fig, axes = plt.<span class="fn">subplots</span>(<span class="num">1</span>, <span class="num">2</span>, figsize=(<span class="num">12</span>, <span class="num">5</span>))
+sns.<span class="fn">scatterplot</span>(data=tips, x=<span class="str">"total_bill"</span>, y=<span class="str">"tip"</span>, ax=axes[<span class="num">0</span>])
+sns.<span class="fn">histplot</span>(data=tips, x=<span class="str">"total_bill"</span>, ax=axes[<span class="num">1</span>])
+plt.<span class="fn">tight_layout</span>()
+plt.<span class="fn">show</span>()</code></pre>
+
+    <h3>The Data Specification System</h3>
+    <div class="code-label">python</div>
+    <pre><code>tips = sns.<span class="fn">load_dataset</span>(<span class="str">"tips"</span>)
+
+<span class="cm"># Seaborn accepts data in multiple forms:</span>
+
+<span class="cm"># 1. DataFrame + column names (preferred in industry)</span>
+sns.<span class="fn">scatterplot</span>(data=tips, x=<span class="str">"total_bill"</span>, y=<span class="str">"tip"</span>, hue=<span class="str">"sex"</span>)
+
+<span class="cm"># 2. Long-form DataFrame (tidy data format)</span>
+df_long = tips.<span class="fn">melt</span>(id_vars=[<span class="str">"sex"</span>], value_vars=[<span class="str">"total_bill"</span>, <span class="str">"tip"</span>])
+sns.<span class="fn">boxplot</span>(data=df_long, x=<span class="str">"variable"</span>, y=<span class="str">"value"</span>, hue=<span class="str">"sex"</span>)
+
+<span class="cm"># 3. Wide-form DataFrame (for corr matrices etc.)</span>
+penguins = sns.<span class="fn">load_dataset</span>(<span class="str">"penguins"</span>)
+sns.<span class="fn">heatmap</span>(penguins.<span class="fn">select_dtypes</span>(<span class="str">"number"</span>).<span class="fn">corr</span>(), annot=<span class="cls">True</span>)</code></pre>
+
+    <div class="callout warn">
+      <div class="callout-title">Industry Best Practice</div>
+      <p>Always use <strong>tidy (long-form) data</strong>. One observation per row, one variable per column. Seaborn's semantic mapping (hue, size, style) works perfectly with this format.</p>
+    </div>
+
+    <h3>Semantic Mapping System</h3>
+    <p>Seaborn maps data variables to visual properties. This is how you encode extra dimensions:</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Parameter</th><th>Encodes</th><th>Works With</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><code>hue</code></td><td>Color</td><td>Categorical & Numeric</td><td><code>hue="species"</code></td></tr>
+          <tr><td><code>size</code></td><td>Marker area</td><td>Numeric preferred</td><td><code>size="body_mass_g"</code></td></tr>
+          <tr><td><code>style</code></td><td>Marker shape / line dash</td><td>Categorical</td><td><code>style="sex"</code></td></tr>
+          <tr><td><code>col</code></td><td>Subplot column</td><td>Figure-level only</td><td><code>col="time"</code></td></tr>
+          <tr><td><code>row</code></td><td>Subplot row</td><td>Figure-level only</td><td><code>row="smoker"</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ==================== DATASETS ==================== -->
+  <section class="section" id="datasets">
+    <div class="section-badge">Chapter 04</div>
+    <h2>Working with Data</h2>
+    <p>Seaborn ships with several canonical datasets used throughout this tutorial.</p>
+
+    <div class="code-label">python</div>
+    <pre><code><span class="cm"># Available built-in datasets</span>
+sns.<span class="fn">get_dataset_names</span>()
+
+<span class="cm"># Load them as pandas DataFrames</span>
+tips      = sns.<span class="fn">load_dataset</span>(<span class="str">"tips"</span>)       <span class="cm"># Restaurant tips</span>
+penguins  = sns.<span class="fn">load_dataset</span>(<span class="str">"penguins"</span>)   <span class="cm"># Palmer penguins (preferred over iris)</span>
+flights   = sns.<span class="fn">load_dataset</span>(<span class="str">"flights"</span>)    <span class="cm"># Airline passenger data</span>
+titanic   = sns.<span class="fn">load_dataset</span>(<span class="str">"titanic"</span>)   <span class="cm"># Survival data</span>
+fmri      = sns.<span class="fn">load_dataset</span>(<span class="str">"fmri"</span>)      <span class="cm"># Brain imaging</span>
+mpg       = sns.<span class="fn">load_dataset</span>(<span class="str">"mpg"</span>)       <span class="cm"># Car attributes</span>
+diamonds  = sns.<span class="fn">load_dataset</span>(<span class="str">"diamonds"</span>)  <span class="cm"># Gemstone data</span>
+
+<span class="cm"># Always inspect before plotting</span>
+<span class="fn">print</span>(tips.<span class="fn">shape</span>)
+<span class="fn">print</span>(tips.<span class="fn">dtypes</span>)
+<span class="fn">print</span>(tips.<span class="fn">describe</span>())</code></pre>
+
+    <div class="callout info">
+      <div class="callout-title">Note on the Iris Dataset</div>
+      <p>The industry has largely moved to <code>penguins</code> as the new standard dataset. It has more realistic missingness, better class separation, and avoids the problematic history of the iris dataset's original use.</p>
+    </div>
+  </section>
+
+  <!-- ==================== RELATIONAL ==================== -->
+  <section class="section" id="relational">
+    <div class="section-badge">Chapter 05</div>
+    <h2>Relational Plots</h2>
+    <p>Used to visualize statistical relationships between two or more numeric variables.</p>
+
+    <h3>scatterplot — exploring correlations</h3>
+    <div class="code-label">python</div>
+    <pre><code>penguins = sns.<span class="fn">load_dataset</span>(<span class="str">"penguins"</span>)
+
+<span class="cm"># Basic scatter</span>
+sns.<span class="fn">scatterplot</span>(
+    data=penguins,
+    x=<span class="str">"flipper_length_mm"</span>,
+    y=<span class="str">"body_mass_g"</span>,
+    hue=<span class="str">"species"</span>,     <span class="cm"># Color by species</span>
+    style=<span class="str">"sex"</span>,        <span class="cm"># Shape by sex</span>
+    size=<span class="str">"bill_length_mm"</span>,  <span class="cm"># Size by another numeric</span>
+    alpha=<span class="num">0.7</span>,
+    palette=<span class="str">"deep"</span>
+)
+plt.<span class="fn">title</span>(<span class="str">"Penguin Body Measurements"</span>)
+plt.<span class="fn">tight_layout</span>()
+plt.<span class="fn">show</span>()</code></pre>
+
+    <h3>lineplot — time series & trends</h3>
+    <div class="code-label">python</div>
+    <pre><code>fmri = sns.<span class="fn">load_dataset</span>(<span class="str">"fmri"</span>)
+
+<span class="cm"># lineplot automatically aggregates and shows confidence intervals</span>
+sns.<span class="fn">lineplot</span>(
+    data=fmri,
+    x=<span class="str">"timepoint"</span>,
+    y=<span class="str">"signal"</span>,
+    hue=<span class="str">"region"</span>,
+    style=<span class="str">"event"</span>,
+    errorbar=<span class="str">"ci"</span>,      <span class="cm"># 95% confidence interval (default)</span>
+    err_style=<span class="str">"band"</span>,   <span class="cm"># Shaded band (vs "bars")</span>
+    n_boot=<span class="num">1000</span>         <span class="cm"># Bootstrap iterations for CI</span>
+)
+
+<span class="cm"># Other errorbar options:</span>
+<span class="cm"># errorbar="sd"   — standard deviation</span>
+<span class="cm"># errorbar="se"   — standard error</span>
+<span class="cm"># errorbar=("pi", 95)  — 95th percentile interval</span></code></pre>
+
+    <h3>relplot — the figure-level gateway</h3>
+    <div class="code-label">python</div>
+    <pre><code><span class="cm"># relplot is figure-level: wraps scatterplot or lineplot</span>
+<span class="cm"># Use it when you need col= or row= faceting</span>
+
+g = sns.<span class="fn">relplot</span>(
+    data=tips,
+    x=<span class="str">"total_bill"</span>,
+    y=<span class="str">"tip"</span>,
+    col=<span class="str">"time"</span>,           <span class="cm"># Creates separate subplots per "time" value</span>
+    hue=<span class="str">"smoker"</span>,
+    style=<span class="str">"smoker"</span>,
+    kind=<span class="str">"scatter"</span>,       <span class="cm"># or "line"</span>
+    height=<span class="num">4</span>,
+    aspect=<span class="num">0.9</span>
+)
+
+<span class="cm"># Customize via FacetGrid interface</span>
+g.<span class="fn">set_axis_labels</span>(<span class="str">"Total Bill ($)"</span>, <span class="str">"Tip Amount ($)"</span>)
+g.<span class="fn">set_titles</span>(<span class="str">"{col_name} Service"</span>)
+g.<span class="fn">add_legend</span>(title=<span class="str">"Smoker?"</span>)
+plt.<span class="fn">show</span>()</code></pre>
+
+    <div class="callout tip">
+      <div class="callout-title">When to use relplot vs scatterplot</div>
+      <p>Use <code>scatterplot</code>/<code>lineplot</code> when composing with matplotlib subplots. Use <code>relplot</code> when you want faceting or a standalone figure.</p>
+    </div>
+  </section>
+
+  <!-- ==================== DISTRIBUTIONS ==================== -->
+  <section class="section" id="distributions">
+    <div class="section-badge">Chapter 06</div>
+    <h2>Distribution Plots</h2>
+    <p>Understand the shape, spread, and density of your data before drawing any conclusions.</p>
+
+    <h3>histplot — modern replacement for distplot</h3>
+    <div class="code-label">python</div>
+    <pre><code><span class="cm"># histplot replaced the deprecated distplot() in v0.11</span>
+penguins = sns.<span class="fn">load_dataset</span>(<span class="str">"penguins"</span>)
+
+fig, axes = plt.<span class="fn">subplots</span>(<span class="num">1</span>, <span class="num">3</span>, figsize=(<span class="num">15</span>, <span class="num">4</span>))
+
+<span class="cm"># 1. Basic histogram</span>
+sns.<span class="fn">histplot</span>(data=penguins, x=<span class="str">"flipper_length_mm"</span>, ax=axes[<span class="num">0</span>])
+
+<span class="cm"># 2. Histogram + KDE overlay (stat="density" required)</span>
+sns.<span class="fn">histplot</span>(
+    data=penguins, x=<span class="str">"flipper_length_mm"</span>,
+    kde=<span class="cls">True</span>, stat=<span class="str">"density"</span>,
+    hue=<span class="str">"species"</span>, element=<span class="str">"step"</span>,
+    ax=axes[<span class="num">1</span>]
+)
+
+<span class="cm"># 3. 2D histogram (bivariate)</span>
+sns.<span class="fn">histplot</span>(
+    data=penguins, x=<span class="str">"flipper_length_mm"</span>,
+    y=<span class="str">"body_mass_g"</span>, bins=<span class="num">30</span>,
+    cbar=<span class="cls">True</span>, ax=axes[<span class="num">2</span>]
+)
+
+plt.<span class="fn">tight_layout</span>()
+plt.<span class="fn">show</span>()</code></pre>
+
+    <h3>kdeplot — smooth density estimation</h3>
+    <div class="code-label">python</div>
+    <pre><code><span class="cm"># Univariate KDE</span>
+sns.<span class="fn">kdeplot</span>(
+    data=penguins, x=<span class="str">"flipper_length_mm"</span>,
+    hue=<span class="str">"species"</span>,
+    fill=<span class="cls">True</span>,           <span class="cm"># Fill under curve</span>
+    alpha=<span class="num">0.4</span>,
+    bw_adjust=<span class="num">0.8</span>       <span class="cm"># Bandwidth: <1=more detail, >1=smoother</span>
+)
+
+<span class="cm"># Bivariate KDE (joint density)</span>
+sns.<span class="fn">kdeplot</span>(
+    data=penguins,
+    x=<span class="str">"flipper_length_mm"</span>,
+    y=<span class="str">"body_mass_g"</span>,
+    hue=<span class="str">"species"</span>,
+    levels=<span class="num">5</span>,            <span class="cm"># Number of contour levels</span>
+    thresh=<span class="num">0.05</span>          <span class="cm"># Minimum density threshold</span>
+)</code></pre>
+
+    <h3>ecdfplot — empirical CDF</h3>
+    <div class="code-label">python</div>
+    <pre><code><span class="cm"># ECDF shows cumulative proportion below each value</span>
+<span class="cm"># Great for comparing distributions without binning bias</span>
+sns.<span class="fn">ecdfplot</span>(
+    data=penguins,
+    x=<span class="str">"flipper_length_mm"</span>,
+    hue=<span class="str">"species"</span>,
+    stat=<span class="str">"proportion"</span>    <span class="cm"># or "count"</span>
+)
+plt.<span class="fn">title</span>(<span class="str">"Empirical Cumulative Distribution Function"</span>)</code></pre>
+
+    <h3>rugplot — raw data overlay</h3>
+    <div class="code-label">python</div>
+    <pre><code><span class="cm"># Layer rugplot on top of other distribution plots</span>
+ax = sns.<span class="fn">kdeplot</span>(data=penguins, x=<span class="str">"body_mass_g"</span>, hue=<span class="str">"species"</span>)
+sns.<span class="fn">rugplot</span>(data=penguins, x=<span class="str">"body_mass_g"</span>, hue=<span class="str">"species"</span>,
+           height=<span class="num">0.04</span>, ax=ax)</code></pre>
+
+    <h3>displot — figure-level distribution interface</h3>
+    <div class="code-label">python</div>
+    <pre><code><span class="cm"># displot wraps histplot, kdeplot, and ecdfplot</span>
+g = sns.<span class="fn">displot</span>(
+    data=penguins,
+    x=<span class="str">"flipper_length_mm"</span>,
+    col=<span class="str">"species"</span>,         <span class="cm"># One subplot per species</span>
+    kind=<span class="str">"hist"</span>,           <span class="cm"># "hist", "kde", or "ecdf"</span>
+    kde=<span class="cls">True</span>,
+    height=<span class="num">4</span>
+)</code></pre>
+  </section>
+
+  <!-- ==================== CATEGORICAL ==================== -->
+  <section class="section" id="categorical">
+    <div class="section-badge">Chapter 07</div>
+    <h2>Categorical Plots</h2>
+    <p>The richest category in Seaborn — for comparing numeric values across categories.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Function</th><th>Type</th><th>Shows</th><th>Best For</th></tr></thead>
+        <tbody>
+          <tr><td><code>stripplot</code></td><td>Point</td><td>All observations</td><td>Small datasets</td></tr>
+          <tr><td><code>swarmplot</code></td><td>Point</td><td>Non-overlapping points</td><td>Up to ~1k rows</td></tr>
+          <tr><td><code>boxplot</code></td><td>Summary</td><td>Quartiles + outliers</td><td>Classic EDA</td></tr>
+          <tr><td><code>violinplot</code></td><td>Summary</td><td>Distribution shape</td><td>Bimodal distributions</td></tr>
+          <tr><td><code>boxenplot</code></td><td>Summary</td><td>More quantiles</td><td>Large datasets</td></tr>
+          <tr><td><code>barplot</code></td><td>Estimate</td><td>Mean + CI</td><td>Comparing central tendency</td></tr>
+          <tr><td><code>pointplot</code></td><td>Estimate</td><td>Mean + CI with lines</td><td>Interactions/trends</td></tr>
+          <tr><td><code>countplot</code></td><td>Count</td><td>Observation count</td><td>Category frequency</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>boxplot — the standard workhorse</h3>
+    <div class="code-label">python</div>
+    <pre><code>tips = sns.<span class="fn">load_dataset</span>(<span class="str">"tips"</span>)
+
+sns.<span class="fn">boxplot</span>(
+    data=tips,
+    x=<span class="str">"day"</span>,
+    y=<span class="str">"total_bill"</span>,
+    hue=<span class="str">"smoker"</span>,
+    order=[<span class="str">"Thur"</span>, <span class="str">"Fri"</span>, <span class="str">"Sat"</span>, <span class="str">"Sun"</span>],   <span class="cm"># Explicit ordering</span>
+    palette=<span class="str">"Set2"</span>,
+    flierprops=dict(marker=<span class="str">"o"</span>, markersize=<span class="num">4</span>, alpha=<span class="num">0.5</span>),
+    linewidth=<span class="num">1.2</span>
+)
+plt.<span class="fn">title</span>(<span class="str">"Bill Distribution by Day and Smoking Status"</span>)
+plt.<span class="fn">ylabel</span>(<span class="str">"Total Bill ($)"</span>)
+plt.<span class="fn">show</span>()</code></pre>
+
+    <h3>violinplot — see the full distribution</h3>
+    <div class="code-label">python</div>
+    <pre><code><span class="cm"># Combines boxplot + KDE — crucial when distributions are bimodal</span>
+sns.<span class="fn">violinplot</span>(
+    data=penguins,
+    x=<span class="str">"species"</span>,
+    y=<span class="str">"flipper_length_mm"</span>,
+    hue=<span class="str">"sex"</span>,
+    split=<span class="cls">True</span>,           <span class="cm"># Show each hue on opposite halves</span>
+    inner=<span class="str">"quart"</span>,        <span class="cm"># "box", "quart", "point", "stick", None</span>
+    palette=<span class="str">"pastel"</span>,
+    bw_adjust=<span class="num">0.75</span>        <span class="cm"># KDE bandwidth</span>
+)</code></pre>
+
+    <h3>Combining plots (professional technique)</h3>
+    <div class="code-label">python</div>
+    <pre><code><span class="cm"># Industry pattern: overlay strip + box for best of both worlds</span>
+fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="num">10</span>, <span class="num">6</span>))
+
+sns.<span class="fn">boxplot</span>(
+    data=penguins, x=<span class="str">"species"</span>, y=<span class="str">"body_mass_g"</span>,
+    width=<span class="num">0.5</span>, fliersize=<span class="num">0</span>,   <span class="cm"># Hide boxplot outliers (shown by strip)</span>
+    palette=<span class="str">"pastel"</span>, ax=ax
+)
+sns.<span class="fn">stripplot</span>(
+    data=penguins, x=<span class="str">"species"</span>, y=<span class="str">"body_mass_g"</span>,
+    hue=<span class="str">"sex"</span>, dodge=<span class="cls">True</span>,
+    alpha=<span class="num">0.6</span>, jitter=<span class="cls">True</span>, ax=ax,
+    palette=<span class="str">"dark"</span>, size=<span class="num">4</span>
+)
+ax.<span class="fn">set_title</span>(<span class="str">"Body Mass by Species with Individual Data Points"</span>)
+plt.<span class="fn">show</span>()</code></pre>
+
+    <h3>barplot — means with confidence intervals</h3>
+    <div class="code-label">python</div>
+    <pre><code><span class="cm"># barplot shows the MEAN of the numeric variable with CI</span>
+<span class="cm"># NOT a count chart (that's countplot)</span>
+sns.<span class="fn">barplot</span>(
+    data=tips,
+    x=<span class="str">"day"</span>,
+    y=<span class="str">"tip"</span>,
+    hue=<span class="str">"sex"</span>,
+    order=[<span class="str">"Thur"</span>, <span class="str">"Fri"</span>, <span class="str">"Sat"</span>, <span class="str">"Sun"</span>],
+    estimator=<span class="str">"mean"</span>,    <span class="cm"># Can use any numpy function: np.median</span>
+    errorbar=<span class="str">"ci"</span>,
+    capsize=<span class="num">0.1</span>,
+    palette=<span class="str">"muted"</span>
+)</code></pre>
+
+    <h3>catplot — the figure-level interface</h3>
+    <div class="code-label">python</div>
+    <pre><code><span class="cm"># catplot wraps ALL categorical plot types</span>
+g = sns.<span class="fn">catplot</span>(
+    data=penguins,
+    x=<span class="str">"species"</span>,
+    y=<span class="str">"body_mass_g"</span>,
+    col=<span class="str">"sex"</span>,
+    kind=<span class="str">"violin"</span>,       <span class="cm"># "strip","swarm","box","violin","boxen","bar","point","count"</span>
+    inner=<span class="str">"quart"</span>,
+    height=<span class="num">5</span>,
+    palette=<span class="str">"husl"</span>
+)
+g.<span class="fn">set_axis_labels</span>(<span class="str">"Species"</span>, <span class="str">"Body Mass (g)"</span>)
+g.<span class="fn">set_titles</span>(<span class="str">"{col_name}"</span>)
+g.<span class="fn">figure</span>.<span class="fn">suptitle</span>(<span class="str">"Penguin Body Mass by Species & Sex"</span>, y=<span class="num">1.02</span>)</code></pre>
+  </section>
+
+  <!-- ==================== REGRESSION ==================== -->
+  <section class="section" id="regression">
+    <div class="section-badge">Chapter 08</div>
+    <h2>Regression Plots</h2>
+    <p>Visualizing linear and nonlinear relationships with statistical fit overlays.</p>
+
+    <h3>regplot — scatter with regression line</h3>
+    <div class="code-label">python</div>
+    <pre><code><span class="cm"># regplot is axes-level — use in subplots</span>
+fig, axes = plt.<span class="fn">subplots</span>(<span class="num">1</span>, <span class="num">3</span>, figsize=(<span class="num">15</span>, <span class="num">5</span>))
+
+<span class="cm"># Linear regression (default)</span>
+sns.<span class="fn">regplot</span>(data=tips, x=<span class="str">"total_bill"</span>, y=<span class="str">"tip"</span>, ax=axes[<span class="num">0</span>])
+axes[<span class="num">0</span>].<span class="fn">set_title</span>(<span class="str">"Linear"</span>)
+
+<span class="cm"># Polynomial regression</span>
+sns.<span class="fn">regplot</span>(data=tips, x=<span class="str">"total_bill"</span>, y=<span class="str">"tip"</span>,
+           order=<span class="num">2</span>, ax=axes[<span class="num">1</span>])
+axes[<span class="num">1</span>].<span class="fn">set_title</span>(<span class="str">"Polynomial (order=2)"</span>)
+
+<span class="cm"># Lowess (non-parametric smooth)</span>
+sns.<span class="fn">regplot</span>(data=tips, x=<span class="str">"total_bill"</span>, y=<span class="str">"tip"</span>,
+           lowess=<span class="cls">True</span>, ax=axes[<span class="num">2</span>])
+axes[<span class="num">2</span>].<span class="fn">set_title</span>(<span class="str">"LOWESS Smooth"</span>)
+
+plt.<span class="fn">tight_layout</span>()</code></pre>
+
+    <h3>lmplot — figure-level with faceting</h3>
+    <div class="code-label">python</div>
+    <pre><code><span class="cm"># lmplot is figure-level — supports col/row faceting</span>
+g = sns.<span class="fn">lmplot</span>(
+    data=tips,
+    x=<span class="str">"total_bill"</span>,
+    y=<span class="str">"tip"</span>,
+    col=<span class="str">"smoker"</span>,
+    hue=<span class="str">"sex"</span>,
+    height=<span class="num">5</span>,
+    aspect=<span class="num">0.8</span>,
+    ci=<span class="num">95</span>,               <span class="cm"># Confidence interval width</span>
+    scatter_kws={<span class="str">"alpha"</span>: <span class="num">0.5</span>},
+    line_kws={<span class="str">"lw"</span>: <span class="num">2</span>}
+)</code></pre>
+  </section>
+
+  <!-- ==================== MATRIX ==================== -->
+  <section class="section" id="matrix">
+    <div class="section-badge">Chapter 09</div>
+    <h2>Matrix Plots</h2>
+    <p>Essential for correlation analysis and exploring tabular data patterns.</p>
+
+    <h3>heatmap — correlation matrices and beyond</h3>
+    <div class="code-label">python</div>
+    <pre><code>penguins = sns.<span class="fn">load_dataset</span>(<span class="str">"penguins"</span>)
+
+<span class="cm"># Correlation matrix heatmap</span>
+numeric_cols = penguins.<span class="fn">select_dtypes</span>(include=<span class="str">"number"</span>)
+corr_matrix = numeric_cols.<span class="fn">corr</span>()
+
+<span class="cm"># Create mask for upper triangle (avoid redundancy)</span>
+mask = np.<span class="fn">triu</span>(np.<span class="fn">ones_like</span>(corr_matrix, dtype=bool))
+
+fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="num">8</span>, <span class="num">6</span>))
+sns.<span class="fn">heatmap</span>(
+    corr_matrix,
+    mask=mask,                  <span class="cm"># Show only lower triangle</span>
+    annot=<span class="cls">True</span>,               <span class="cm"># Show values in cells</span>
+    fmt=<span class="str">".2f"</span>,                 <span class="cm"># Format annotation values</span>
+    cmap=<span class="str">"coolwarm"</span>,           <span class="cm"># Diverging colormap (best for correlation)</span>
+    center=<span class="num">0</span>,                  <span class="cm"># Center colormap at 0</span>
+    vmin=-<span class="num">1</span>, vmax=<span class="num">1</span>,
+    square=<span class="cls">True</span>,
+    linewidths=<span class="num">0.5</span>,
+    cbar_kws={<span class="str">"shrink"</span>: <span class="num">0.75</span>},
+    ax=ax
+)
+ax.<span class="fn">set_title</span>(<span class="str">"Feature Correlation Matrix"</span>, pad=<span class="num">20</span>)
+plt.<span class="fn">tight_layout</span>()</code></pre>
+
+    <div class="callout warn">
+      <div class="callout-title">Colormap Selection Matters</div>
+      <p>Use <strong>diverging</strong> colormaps (<code>coolwarm</code>, <code>RdBu</code>, <code>PiYG</code>) for data centered around 0. Use <strong>sequential</strong> colormaps (<code>YlOrRd</code>, <code>viridis</code>, <code>Blues</code>) for unidirectional data. Avoid <code>jet</code> — it's perceptually misleading.</p>
+    </div>
+
+    <h3>clustermap — hierarchical clustering</h3>
+    <div class="code-label">python</div>
+    <pre><code><span class="cm"># clustermap reorders rows/columns by hierarchical clustering</span>
+flights = sns.<span class="fn">load_dataset</span>(<span class="str">"flights"</span>)
+pivot = flights.<span class="fn">pivot_table</span>(
+    index=<span class="str">"month"</span>, columns=<span class="str">"year"</span>, values=<span class="str">"passengers"</span>
+)
+
+g = sns.<span class="fn">clustermap</span>(
+    pivot,
+    cmap=<span class="str">"YlOrRd"</span>,
+    standard_scale=<span class="num">1</span>,         <span class="cm"># Normalize within rows (0 to 1)</span>
+    figsize=(<span class="num">12</span>, <span class="num">8</span>),
+    linewidths=<span class="num">0.1</span>,
+    annot=<span class="cls">True</span>,
+    fmt=<span class="str">".0f"</span>,
+    col_cluster=<span class="cls">False</span>,        <span class="cm"># Don't cluster columns (time is ordered)</span>
+    row_cluster=<span class="cls">True</span>          <span class="cm"># Cluster months</span>
+)
+g.fig.<span class="fn">suptitle</span>(<span class="str">"Airline Passengers Heatmap"</span>, y=<span class="num">1.02</span>)</code></pre>
+  </section>
+
+  <!-- ==================== GRIDS ==================== -->
+  <section class="section" id="grids">
+    <div class="section-badge">Chapter 10</div>
+    <h2>Multi-Plot Grids</h2>
+    <p>Advanced techniques for visualizing many variables simultaneously — a skill that separates junior analysts from senior ones.</p>
+
+    <h3>pairplot — multivariate exploration</h3>
+    <div class="code-label">python</div>
+    <pre><code><span class="cm"># pairplot is the fastest way to see all pairwise relationships</span>
+g = sns.<span class="fn">pairplot</span>(
+    data=penguins.<span class="fn">dropna</span>(),
+    hue=<span class="str">"species"</span>,
+    vars=[<span class="str">"bill_length_mm"</span>, <span class="str">"bill_depth_mm"</span>,
+          <span class="str">"flipper_length_mm"</span>, <span class="str">"body_mass_g"</span>],
+    diag_kind=<span class="str">"kde"</span>,          <span class="cm"># Diagonal: "hist", "kde", or None</span>
+    plot_kws={<span class="str">"alpha"</span>: <span class="num">0.5</span>, <span class="str">"edgecolor"</span>: <span class="str">"none"</span>},
+    diag_kws={<span class="str">"fill"</span>: <span class="cls">True</span>},
+    corner=<span class="cls">False</span>              <span class="cm"># True = lower triangle only</span>
+)
+g.<span class="fn">figure</span>.<span class="fn">suptitle</span>(<span class="str">"Penguin Measurements — All Pairs"</span>, y=<span class="num">1.01</span>)</code></pre>
+
+    <h3>FacetGrid — full control over multi-plot layout</h3>
+    <div class="code-label">python</div>
+    <pre><code><span class="cm"># FacetGrid gives maximum flexibility for custom multi-panel figures</span>
+tips = sns.<span class="fn">load_dataset</span>(<span class="str">"tips"</span>)
+
+g = sns.<span class="fn">FacetGrid</span>(
+    tips,
+    col=<span class="str">"time"</span>,
+    row=<span class="str">"smoker"</span>,
+    hue=<span class="str">"sex"</span>,
+    height=<span class="num">4</span>,
+    aspect=<span class="num">1</span>,
+    margin_titles=<span class="cls">True</span>    <span class="cm"># Titles on margin, not each cell</span>
+)
+
+g.<span class="fn">map</span>(sns.scatterplot, <span class="str">"total_bill"</span>, <span class="str">"tip"</span>, alpha=<span class="num">0.7</span>)
+g.<span class="fn">add_legend</span>()
+g.<span class="fn">set_axis_labels</span>(<span class="str">"Total Bill ($)"</span>, <span class="str">"Tip ($)"</span>)
+g.<span class="fn">set_titles</span>(col_template=<span class="str">"{col_name}"</span>, row_template=<span class="str">"Smoker: {row_name}"</span>)
+
+<span class="cm"># Apply custom function across all axes</span>
+<span class="kw">def</span> <span class="fn">add_ref_line</span>(*args, **kwargs):
+    plt.<span class="fn">axhline</span>(y=<span class="num">5</span>, color=<span class="str">"red"</span>, linestyle=<span class="str">"--"</span>, alpha=<span class="num">0.5</span>, label=<span class="str">"$5 tip"</span>)
+
+g.<span class="fn">map</span>(add_ref_line)
+plt.<span class="fn">show</span>()</code></pre>
+
+    <h3>PairGrid — custom pair plots</h3>
+    <div class="code-label">python</div>
+    <pre><code><span class="cm"># PairGrid lets you specify different plot types per region</span>
+g = sns.<span class="fn">PairGrid</span>(penguins.<span class="fn">dropna</span>(), hue=<span class="str">"species"</span>,
+                  vars=[<span class="str">"bill_length_mm"</span>, <span class="str">"flipper_length_mm"</span>, <span class="str">"body_mass_g"</span>])
+
+g.<span class="fn">map_upper</span>(sns.scatterplot, alpha=<span class="num">0.6</span>)   <span class="cm"># Upper triangle: scatter</span>
+g.<span class="fn">map_lower</span>(sns.kdeplot, fill=<span class="cls">True</span>)       <span class="cm"># Lower triangle: KDE contours</span>
+g.<span class="fn">map_diag</span>(sns.histplot, kde=<span class="cls">True</span>)       <span class="cm"># Diagonal: histogram + KDE</span>
+g.<span class="fn">add_legend</span>()
+plt.<span class="fn">show</span>()</code></pre>
+  </section>
+
+  <!-- ==================== THEMES ==================== -->
+  <section class="section" id="themes">
+    <div class="section-badge">Chapter 11</div>
+    <h2>Themes & Styling</h2>
+    <p>Professional plots require consistent, intentional styling. This is how you control every visual aspect.</p>
+
+    <h3>Built-in Themes</h3>
+    <div class="code-label">python</div>
+    <pre><code><span class="cm"># Five built-in styles</span>
+<span class="cm"># "darkgrid" | "whitegrid" | "dark" | "white" | "ticks"</span>
+
+sns.<span class="fn">set_style</span>(<span class="str">"whitegrid"</span>)     <span class="cm"># Great for publication figures</span>
+sns.<span class="fn">set_style</span>(<span class="str">"darkgrid"</span>)      <span class="cm"># Good for exploratory analysis</span>
+sns.<span class="fn">set_style</span>(<span class="str">"ticks"</span>)         <span class="cm"># Minimal, journal-style</span>
+
+<span class="cm"># Four context presets (scale fonts/lines for output medium)</span>
+sns.<span class="fn">set_context</span>(<span class="str">"paper"</span>)       <span class="cm"># Smaller — for printed papers</span>
+sns.<span class="fn">set_context</span>(<span class="str">"notebook"</span>)   <span class="cm"># Default — Jupyter notebooks</span>
+sns.<span class="fn">set_context</span>(<span class="str">"talk"</span>)       <span class="cm"># Larger — for presentations</span>
+sns.<span class="fn">set_context</span>(<span class="str">"poster"</span>)     <span class="cm"># Largest — for poster displays</span>
+
+<span class="cm"># set_theme combines both (preferred)</span>
+sns.<span class="fn">set_theme</span>(
+    style=<span class="str">"whitegrid"</span>,
+    context=<span class="str">"notebook"</span>,
+    font=<span class="str">"DejaVu Sans"</span>,
+    font_scale=<span class="num">1.1</span>,
+    rc={<span class="str">"figure.figsize"</span>: (<span class="num">10</span>, <span class="num">6</span>), <span class="str">"axes.spines.right"</span>: <span class="cls">False</span>,
+        <span class="str">"axes.spines.top"</span>: <span class="cls">False</span>}
+)</code></pre>
+
+    <h3>Color Palettes</h3>
+    <div class="code-label">python</div>
+    <pre><code><span class="cm"># View a palette</span>
+sns.<span class="fn">color_palette</span>(<span class="str">"tab10"</span>)     <span class="cm"># Returns list of RGB tuples</span>
+sns.<span class="fn">palplot</span>(sns.<span class="fn">color_palette</span>(<span class="str">"viridis"</span>, <span class="num">8</span>))
+
+<span class="cm"># Qualitative (categorical data)</span>
+<span class="cm"># "Set1", "Set2", "Set3", "tab10", "tab20", "Paired", "deep", "muted", "pastel", "bright", "dark", "colorblind"</span>
+
+<span class="cm"># Sequential (numeric low→high)</span>
+<span class="cm"># "viridis", "plasma", "inferno", "magma", "cividis" (perceptually uniform)</span>
+<span class="cm"># "Blues", "Greens", "Reds", "YlOrRd", "BuPu"</span>
+
+<span class="cm"># Diverging (data with meaningful midpoint)</span>
+<span class="cm"># "coolwarm", "RdBu", "PiYG", "BrBG", "seismic"</span>
+
+<span class="cm"># Custom palette from hex codes</span>
+custom = [<span class="str">"#264653"</span>, <span class="str">"#2a9d8f"</span>, <span class="str">"#e9c46a"</span>, <span class="str">"#f4a261"</span>, <span class="str">"#e76f51"</span>]
+sns.<span class="fn">set_palette</span>(custom)
+
+<span class="cm"># Husl: evenly spaced perceptually uniform colors</span>
+palette = sns.<span class="fn">color_palette</span>(<span class="str">"husl"</span>, n_colors=<span class="num">8</span>)
+
+<span class="cm"># Cubehelix: fully customizable</span>
+palette = sns.<span class="fn">cubehelix_palette</span>(n_colors=<span class="num">6</span>, start=<span class="num">0.5</span>, rot=<span class="num">-0.75</span>, as_cmap=<span class="cls">False</span>)</code></pre>
+
+    <h3>Fine-grained Customization</h3>
+    <div class="code-label">python</div>
+    <pre><code><span class="cm"># Seaborn returns axes — fully customizable via matplotlib</span>
+fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="num">10</span>, <span class="num">6</span>))
+
+ax = sns.<span class="fn">boxplot</span>(data=tips, x=<span class="str">"day"</span>, y=<span class="str">"total_bill"</span>, ax=ax)
+
+<span class="cm"># Matplotlib post-processing</span>
+ax.<span class="fn">set_title</span>(<span class="str">"Daily Bill Distribution"</span>, fontsize=<span class="num">16</span>, fontweight=<span class="str">"bold"</span>, pad=<span class="num">15</span>)
+ax.<span class="fn">set_xlabel</span>(<span class="str">"Day of Week"</span>, fontsize=<span class="num">12</span>)
+ax.<span class="fn">set_ylabel</span>(<span class="str">"Total Bill ($)"</span>, fontsize=<span class="num">12</span>)
+ax.<span class="fn">set_xticklabels</span>([<span class="str">"Thursday"</span>, <span class="str">"Friday"</span>, <span class="str">"Saturday"</span>, <span class="str">"Sunday"</span>])
+ax.<span class="fn">yaxis</span>.<span class="fn">set_major_formatter</span>(plt.FuncFormatter(<span class="kw">lambda</span> x, _: <span class="fn">f</span><span class="str">"${x:.0f}"</span>))
+ax.<span class="fn">axhline</span>(y=tips[<span class="str">"total_bill"</span>].<span class="fn">mean</span>(), color=<span class="str">"red"</span>,
+           linestyle=<span class="str">"--"</span>, label=<span class="str">"Overall Mean"</span>, alpha=<span class="num">0.8</span>)
+ax.<span class="fn">legend</span>()
+sns.<span class="fn">despine</span>()          <span class="cm"># Remove top and right spines</span>
+plt.<span class="fn">tight_layout</span>()
+plt.<span class="fn">savefig</span>(<span class="str">"output.png"</span>, dpi=<span class="num">300</span>, bbox_inches=<span class="str">"tight"</span>)  <span class="cm"># Publication quality</span></code></pre>
+  </section>
+
+  <!-- ==================== REAL WORLD ==================== -->
+  <section class="section" id="realworld">
+    <div class="section-badge">Chapter 12</div>
+    <h2>Real-World EDA Pipeline</h2>
+    <p>A complete exploratory data analysis workflow used in industry — mimicking how data scientists at top companies actually work.</p>
+
+    <div class="callout info">
+      <div class="callout-title">Scenario</div>
+      <p>You've just received a Titanic dataset. Your job is to produce a compelling visual EDA before building a survival prediction model.</p>
+    </div>
+
+    <h3>Step 1 — Data Loading & Overview</h3>
+    <div class="code-label">python</div>
+    <pre><code><span class="kw">import</span> <span class="imp">seaborn</span> <span class="kw">as</span> sns
+<span class="kw">import</span> <span class="imp">matplotlib.pyplot</span> <span class="kw">as</span> plt
+<span class="kw">import</span> <span class="imp">pandas</span> <span class="kw">as</span> pd
+<span class="kw">import</span> <span class="imp">numpy</span> <span class="kw">as</span> np
+
+<span class="cm"># Set publication-quality theme</span>
+sns.<span class="fn">set_theme</span>(style=<span class="str">"whitegrid"</span>, context=<span class="str">"notebook"</span>, font_scale=<span class="num">1.05</span>)
+plt.rcParams[<span class="str">"figure.dpi"</span>] = <span class="num">120</span>
+
+titanic = sns.<span class="fn">load_dataset</span>(<span class="str">"titanic"</span>)
+
+<span class="cm"># Quick data audit</span>
+<span class="fn">print</span>(titanic.<span class="fn">info</span>())
+<span class="fn">print</span>(titanic.<span class="fn">isnull</span>().<span class="fn">sum</span>() / len(titanic) * <span class="num">100</span>)  <span class="cm"># % missing</span></code></pre>
+
+    <h3>Step 2 — Missingness Heatmap</h3>
+    <div class="code-label">python</div>
+    <pre><code><span class="cm"># Visualize missing data patterns before anything else</span>
+fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="num">12</span>, <span class="num">4</span>))
+sns.<span class="fn">heatmap</span>(
+    titanic.<span class="fn">isnull</span>().<span class="fn">T</span>,
+    cbar=<span class="cls">False</span>,
+    cmap=<span class="str">"YlOrRd"</span>,
+    yticklabels=<span class="cls">True</span>,
+    ax=ax
+)
+ax.<span class="fn">set_title</span>(<span class="str">"Missing Data Pattern (Yellow = Missing)"</span>)
+plt.<span class="fn">tight_layout</span>()</code></pre>
+
+    <h3>Step 3 — Survival Rate Analysis</h3>
+    <div class="code-label">python</div>
+    <pre><code>fig, axes = plt.<span class="fn">subplots</span>(<span class="num">2</span>, <span class="num">2</span>, figsize=(<span class="num">14</span>, <span class="num">10</span>))
+
+<span class="cm"># Survival by class</span>
+sns.<span class="fn">barplot</span>(data=titanic, x=<span class="str">"class"</span>, y=<span class="str">"survived"</span>,
+           hue=<span class="str">"sex"</span>, palette=<span class="str">"muted"</span>, ax=axes[<span class="num">0</span>,<span class="num">0</span>])
+axes[<span class="num">0</span>,<span class="num">0</span>].<span class="fn">set_title</span>(<span class="str">"Survival Rate by Class & Sex"</span>)
+axes[<span class="num">0</span>,<span class="num">0</span>].<span class="fn">set_ylabel</span>(<span class="str">"Survival Rate"</span>)
+
+<span class="cm"># Age distribution by survival</span>
+sns.<span class="fn">kdeplot</span>(data=titanic, x=<span class="str">"age"</span>, hue=<span class="str">"survived"</span>,
+           fill=<span class="cls">True</span>, palette=<span class="str">"Set1"</span>, alpha=<span class="num">0.4</span>, ax=axes[<span class="num">0</span>,<span class="num">1</span>])
+axes[<span class="num">0</span>,<span class="num">1</span>].<span class="fn">set_title</span>(<span class="str">"Age Distribution by Survival"</span>)
+
+<span class="cm"># Fare by class</span>
+sns.<span class="fn">boxenplot</span>(data=titanic, x=<span class="str">"class"</span>, y=<span class="str">"fare"</span>,
+            palette=<span class="str">"pastel"</span>, ax=axes[<span class="num">1</span>,<span class="num">0</span>])
+axes[<span class="num">1</span>,<span class="num">0</span>].<span class="fn">set_title</span>(<span class="str">"Fare Distribution by Class"</span>)
+
+<span class="cm"># Embarkation and survival</span>
+sns.<span class="fn">countplot</span>(data=titanic, x=<span class="str">"embark_town"</span>, hue=<span class="str">"survived"</span>,
+             palette=<span class="str">"Set2"</span>, ax=axes[<span class="num">1</span>,<span class="num">1</span>])
+axes[<span class="num">1</span>,<span class="num">1</span>].<span class="fn">set_title</span>(<span class="str">"Embarkation Port vs Survival"</span>)
+
+plt.<span class="fn">suptitle</span>(<span class="str">"Titanic Survival Analysis Dashboard"</span>, y=<span class="num">1.01</span>,
+             fontsize=<span class="num">16</span>, fontweight=<span class="str">"bold"</span>)
+sns.<span class="fn">despine</span>()
+plt.<span class="fn">tight_layout</span>()
+plt.<span class="fn">savefig</span>(<span class="str">"titanic_eda.png"</span>, dpi=<span class="num">300</span>, bbox_inches=<span class="str">"tight"</span>)</code></pre>
+
+    <h3>Step 4 — Feature Correlation with Significance</h3>
+    <div class="code-label">python</div>
+    <pre><code><span class="kw">from</span> <span class="imp">scipy</span> <span class="kw">import</span> stats
+
+<span class="cm"># Compute correlation and p-values</span>
+numeric_titanic = titanic.<span class="fn">select_dtypes</span>(include=<span class="str">"number"</span>).<span class="fn">dropna</span>()
+corr = numeric_titanic.<span class="fn">corr</span>()
+
+<span class="cm"># Compute p-value matrix</span>
+<span class="kw">def</span> <span class="fn">compute_pvalues</span>(df):
+    p_matrix = pd.<span class="fn">DataFrame</span>(np.<span class="fn">ones</span>((df.shape[<span class="num">1</span>], df.shape[<span class="num">1</span>])),
+                              columns=df.columns, index=df.columns)
+    <span class="kw">for</span> col1 <span class="kw">in</span> df.columns:
+        <span class="kw">for</span> col2 <span class="kw">in</span> df.columns:
+            _, p = stats.<span class="fn">pearsonr</span>(df[col1], df[col2])
+            p_matrix.<span class="fn">loc</span>[col1, col2] = p
+    <span class="kw">return</span> p_matrix
+
+p_vals = <span class="fn">compute_pvalues</span>(numeric_titanic)
+sig_mask = p_vals > <span class="num">0.05</span>   <span class="cm"># Mask non-significant correlations</span>
+
+sns.<span class="fn">heatmap</span>(corr, annot=<span class="cls">True</span>, fmt=<span class="str">".2f"</span>, cmap=<span class="str">"coolwarm"</span>,
+           center=<span class="num">0</span>, mask=sig_mask, linewidths=<span class="num">0.5</span>,
+           cbar_kws={<span class="str">"label"</span>: <span class="str">"Pearson r (p < 0.05)"</span>})
+plt.<span class="fn">title</span>(<span class="str">"Significant Correlations Only"</span>)</code></pre>
+  </section>
+
+  <!-- ==================== ANTI-PATTERNS ==================== -->
+  <section class="section" id="patterns">
+    <div class="section-badge">Chapter 13</div>
+    <h2>Common Mistakes & Anti-Patterns</h2>
+    <p>Avoid these pitfalls that trip up even experienced analysts.</p>
+
+    <div class="compare">
+      <div class="compare-box good">
+        <div class="compare-title">Correct</div>
+        <div class="code-label" style="font-size:10px">python</div>
+        <pre style="font-size:12px; padding:0.75rem"><code><span class="cm"># Use dropna() before certain plots</span>
+sns.<span class="fn">pairplot</span>(penguins.<span class="fn">dropna</span>())
+
+<span class="cm"># Use displot instead of distplot</span>
+sns.<span class="fn">displot</span>(x=<span class="str">"total_bill"</span>, data=tips)
+
+<span class="cm"># Call tight_layout before show/savefig</span>
+plt.<span class="fn">tight_layout</span>()
+plt.<span class="fn">show</span>()</code></pre>
+      </div>
+      <div class="compare-box alt">
+        <div class="compare-title">Anti-Pattern</div>
+        <div class="code-label" style="font-size:10px">python</div>
+        <pre style="font-size:12px; padding:0.75rem"><code><span class="cm"># NaN causes cryptic errors in pairplot</span>
+sns.<span class="fn">pairplot</span>(penguins)  <span class="cm"># ❌</span>
+
+<span class="cm"># distplot is deprecated since v0.11</span>
+sns.<span class="fn">distplot</span>(tips[<span class="str">"total_bill"</span>])  <span class="cm"># ❌</span>
+
+<span class="cm"># Clipped labels / overlapping text</span>
+plt.<span class="fn">show</span>()  <span class="cm"># ❌ (no tight_layout)</span></code></pre>
+      </div>
+    </div>
+
+    <h3>Anti-patterns checklist</h3>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-title">Never use distplot()</div>
+        <div class="tl-body">Deprecated since v0.11. Replace with <code>histplot(kde=True)</code> or <code>displot()</code>.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-title">Don't mix figure-level and axes-level</div>
+        <div class="tl-body">Don't pass <code>ax=</code> to <code>relplot</code>, <code>displot</code>, or <code>catplot</code> — they manage their own figures.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-title">Respect hue_order and order</div>
+        <div class="tl-body">Always use <code>order=</code> and <code>hue_order=</code> for categorical plots to prevent randomized legend/axis ordering across runs.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-title">Don't use pie charts</div>
+        <div class="tl-body">Seaborn intentionally doesn't support pie charts. Use <code>barplot</code> or <code>countplot</code> — they're more readable.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-title">Always save with bbox_inches="tight"</div>
+        <div class="tl-body">Otherwise legends and labels get cropped in the saved file even if they look fine on screen.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== CHEATSHEET ==================== -->
+  <section class="section" id="cheatsheet">
+    <div class="section-badge">Chapter 14</div>
+    <h2>Quick Reference Cheatsheet</h2>
+
+    <h3>Plot Selection Guide</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>I want to show...</th><th>Use</th><th>Level</th></tr></thead>
+        <tbody>
+          <tr><td>Relationship between 2 numeric vars</td><td><code>scatterplot</code> / <code>relplot(kind="scatter")</code></td><td>both</td></tr>
+          <tr><td>Trend over time</td><td><code>lineplot</code> / <code>relplot(kind="line")</code></td><td>both</td></tr>
+          <tr><td>Distribution of one variable</td><td><code>histplot</code>, <code>kdeplot</code>, <code>ecdfplot</code></td><td>axes</td></tr>
+          <tr><td>Compare distributions across groups</td><td><code>boxplot</code>, <code>violinplot</code>, <code>boxenplot</code></td><td>axes</td></tr>
+          <tr><td>Mean comparison across groups</td><td><code>barplot</code>, <code>pointplot</code></td><td>axes</td></tr>
+          <tr><td>All data points for groups</td><td><code>stripplot</code>, <code>swarmplot</code></td><td>axes</td></tr>
+          <tr><td>Correlation matrix</td><td><code>heatmap</code></td><td>axes</td></tr>
+          <tr><td>Regression relationship</td><td><code>regplot</code> / <code>lmplot</code></td><td>both</td></tr>
+          <tr><td>All pairwise relationships</td><td><code>pairplot</code> / <code>PairGrid</code></td><td>figure</td></tr>
+          <tr><td>Faceted subplots</td><td><code>FacetGrid</code> / <code>catplot(col=)</code></td><td>figure</td></tr>
+          <tr><td>Hierarchical clusters</td><td><code>clustermap</code></td><td>figure</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Essential Parameters</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Parameter</th><th>Purpose</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><code>data=</code></td><td>DataFrame source</td><td><code>data=tips</code></td></tr>
+          <tr><td><code>x=</code>, <code>y=</code></td><td>Column names for axes</td><td><code>x="age"</code></td></tr>
+          <tr><td><code>hue=</code></td><td>Color grouping</td><td><code>hue="species"</code></td></tr>
+          <tr><td><code>palette=</code></td><td>Color scheme</td><td><code>palette="Set2"</code></td></tr>
+          <tr><td><code>order=</code></td><td>Category order on x-axis</td><td><code>order=["Mon","Tue"]</code></td></tr>
+          <tr><td><code>hue_order=</code></td><td>Hue category order</td><td><code>hue_order=["M","F"]</code></td></tr>
+          <tr><td><code>ax=</code></td><td>Target axes (axes-level only)</td><td><code>ax=axes[0]</code></td></tr>
+          <tr><td><code>col=</code>, <code>row=</code></td><td>Facet columns/rows</td><td><code>col="time"</code></td></tr>
+          <tr><td><code>errorbar=</code></td><td>Error representation</td><td><code>errorbar="ci"</code></td></tr>
+          <tr><td><code>estimator=</code></td><td>Aggregation function</td><td><code>estimator="mean"</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Saving Publication-Quality Figures</h3>
+    <div class="code-label">python</div>
+    <pre><code><span class="cm"># For papers / reports (300 DPI, tight bounding box)</span>
+plt.<span class="fn">savefig</span>(<span class="str">"figure.png"</span>, dpi=<span class="num">300</span>, bbox_inches=<span class="str">"tight"</span>,
+           facecolor=<span class="str">"white"</span>, transparent=<span class="cls">False</span>)
+
+<span class="cm"># Vector format for infinite zoom (presentations, web)</span>
+plt.<span class="fn">savefig</span>(<span class="str">"figure.svg"</span>, bbox_inches=<span class="str">"tight"</span>)
+plt.<span class="fn">savefig</span>(<span class="str">"figure.pdf"</span>, bbox_inches=<span class="str">"tight"</span>)  <span class="cm"># LaTeX papers</span>
+
+<span class="cm"># Set global DPI for all figures</span>
+plt.rcParams[<span class="str">"savefig.dpi"</span>] = <span class="num">300</span>
+plt.rcParams[<span class="str">"savefig.bbox"</span>] = <span class="str">"tight"</span></code></pre>
+
+    <hr class="divider">
+
+    <div style="text-align:center; padding: 2rem 0 1rem;">
+      <div style="font-family:'Syne',sans-serif; font-size:13px; color:var(--text3); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.75rem;">Topics Covered</div>
+      <div>
+        <span class="pill green">Installation</span>
+        <span class="pill green">Figure vs Axes Level</span>
+        <span class="pill green">Semantic Mapping</span>
+        <span class="pill amber">Relational Plots</span>
+        <span class="pill amber">Distribution Plots</span>
+        <span class="pill amber">Categorical Plots</span>
+        <span class="pill amber">Regression Plots</span>
+        <span class="pill amber">Matrix Plots</span>
+        <span class="pill blue">FacetGrid</span>
+        <span class="pill blue">PairGrid</span>
+        <span class="pill blue">Themes & Palettes</span>
+        <span class="pill coral">EDA Pipeline</span>
+        <span class="pill coral">Anti-patterns</span>
+        <span class="pill coral">Export & Publishing</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+const links = document.querySelectorAll('.nav-link');
+const sections = document.querySelectorAll('.section');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      links.forEach(l => l.classList.remove('active'));
+      const active = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { threshold: 0.2 });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
